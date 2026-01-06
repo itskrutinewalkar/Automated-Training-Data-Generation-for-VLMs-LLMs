@@ -1,12 +1,5 @@
 # Automated Training Data Generation for VLMs & LLMs
-
-Project skeleton for generating multimodal training datasets (images + text) and annotation pipelines.
-
-Structure:
-- data/: raw, processed, annotated, cleaned, verified
-- src/: ingestion, annotation, cleaning, dashboard, export, utils
-- notebooks/: demos
-- docs/: design docs and deliverables
-- tests/: basic pytest test files
+this project is meant for educational purposes only.
+Project by - Kruti Newalkar, Aadnya Kulkarni, Yukta Bhor and Rujuta Kulkarni
 
 See `setup_instructions.md` for environment setup and usage.
