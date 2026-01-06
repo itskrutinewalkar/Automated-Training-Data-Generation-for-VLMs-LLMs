@@ -46,7 +46,8 @@ def extract_text_from_images(image_paths, ocr_output_path=None):
         extracted_data.append({
             "page_number": i + 1,
             "image_path": img_path,
-            "text": text.strip()
+            "text": text.strip(),
+            "raw_text": text.strip()
         })
         print(f"[INFO] Extracted text from page {i+1}")
 
@@ -55,3 +56,4 @@ def extract_text_from_images(image_paths, ocr_output_path=None):
         json.dump(extracted_data, f, indent=2)
 
     print(f"[INFO] OCR results saved to {ocr_output_path}")
+    return extracted_data

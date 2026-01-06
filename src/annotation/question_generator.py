@@ -17,10 +17,16 @@ class QuestionGenerator:
         outputs = self.model.generate(
             **inputs,
             max_length=64,
-            num_beams=4
+            num_beams=5,
+            num_return_sequences=3,
+            do_sample=True,
+            temperature=0.9
         )
 
-        return self.tokenizer.decode(
-            outputs[0],
-            skip_special_tokens=True
-        )
+        # 🔥 Decode ALL questions
+        questions = [
+            self.tokenizer.decode(o, skip_special_tokens=True)
+            for o in outputs
+        ]
+
+        return questions

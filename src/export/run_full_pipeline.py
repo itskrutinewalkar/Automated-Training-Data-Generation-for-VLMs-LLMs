@@ -2,7 +2,7 @@ from src.ingestion.ingestion_pipeline import process_pdf
 from src.annotation.pipeline import run_annotation_and_qa
 from src.cleaning.cleaning_pipeline import get_latest_cleaned_file
 
-def run(uploaded_file=None, cleaned_json_path=None, progress_callback=None):
+def run(uploaded_files=None, cleaned_json_path=None, progress_callback=None):
     def update(message, percent):
         if progress_callback:
             progress_callback(message, percent)
@@ -10,9 +10,9 @@ def run(uploaded_file=None, cleaned_json_path=None, progress_callback=None):
     update("Starting Annotation and QA Pipeline...", 0)
 
     # Ingestion Step (if uploaded_file is provided)
-    if uploaded_file:
+    if uploaded_files:
         update("Running OCR and PDF ingestion", 20)
-        ingestion_outputs = process_pdf(uploaded_file)
+        ingestion_outputs = process_pdf(uploaded_files=uploaded_files)
         cleaned_path = ingestion_outputs["cleaned"]
 
     elif cleaned_json_path:

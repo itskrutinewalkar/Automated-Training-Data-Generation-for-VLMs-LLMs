@@ -44,6 +44,8 @@ body {
 
 .center {
     text-align: center;
+    padding-top: 0rem;
+    margin-top: 0rem;
 }
 
 p {
@@ -75,48 +77,14 @@ p {
 
 
 
-# -------------------- SIDEBAR --------------------
-st.sidebar.title("Navigation")
-page = st.sidebar.radio("Go to", ["Home", "Run Pipeline", "Results"])
-
-st.sidebar.markdown("""
-### Project Scope
-• OCR & PDF Ingestion  
-• Text Cleaning  
-• QA Annotation  
-• LLM / VLM Dataset Export  
-""")
-
 # -------------------- HOME --------------------
-if page == "Home":
-    st.markdown("<h1 class='center'>Automated Training Data Generation</h1>", unsafe_allow_html=True)
+st.markdown("<h1 class='center'>Automated Dataset Generation</h1>", unsafe_allow_html=True)
 
-    col1, col2 = st.columns([1.2, 1])
+st.info("Welcome to the Automated Dataset Generation Dashboard! This tool allows you to upload PDF documents and automatically generate datasets in question-answer formats. Simply upload your PDF and run the pipeline to get started. This tool gives you the ability to download generated datasets and intermediate outputs in JSON for further analysis.")
 
-    with col1:
-        st.markdown("""
-        <div class="card">
-        <h3>Overview</h3>
-        <p>
-        This system automatically converts unstructured PDF documents into
-        structured datasets suitable for fine-tuning Large Language Models (LLMs)
-        and Vision-Language Models (VLMs).
-        </p>
-        <p>
-        The pipeline performs OCR, text cleaning, annotation, and question-answer
-        generation with minimal human intervention.
-        </p>
-        </div>
-        """, unsafe_allow_html=True)
+st.header("Run Dataset Generation Pipeline")
 
-    with col2:
-        st.image("assets/system_architecture.png", use_container_width=True)
-
-# -------------------- RUN PIPELINE --------------------
-elif page == "Run Pipeline":
-    st.header("Run Dataset Generation Pipeline")
-
-    st.markdown("""
+st.markdown("""
     <div class="card">
     <b>Pipeline Stages</b><br>
     1. PDF Ingestion & OCR<br>
@@ -124,13 +92,13 @@ elif page == "Run Pipeline":
     3. Annotation & QA Generation<br>
     4. Dataset Export
     </div>
-    """, unsafe_allow_html=True)
+ """, unsafe_allow_html=True)
 
-    uploaded_file = st.file_uploader("Upload a PDF document", type=["pdf"])
-    run_btn = st.button("Run Pipeline", type="primary", use_container_width=True)
+files = st.file_uploader("Upload a PDF document", type=["pdf"], accept_multiple_files=True)
+run_btn = st.button("Run Pipeline", type="primary", use_container_width=True)
 
-    if uploaded_file and run_btn:
-        # Initialize timing
+if files and run_btn:
+    # Initialize timing
         st.session_state.start_time = time.time()
         st.session_state.end_time = None
 
@@ -145,7 +113,7 @@ elif page == "Run Pipeline":
 
             # Run pipeline
             st.session_state.outputs = run(
-                uploaded_file=uploaded_file,
+                uploaded_files=files,
                 progress_callback=ui_progress
             )
 
@@ -163,42 +131,39 @@ elif page == "Run Pipeline":
             )
 
         time.sleep(1)  # Brief pause before navigating to results
-        page = "Results"
-        st.rerun()
+        
+        st.header("Pipeline Results")
 
-# -------------------- RESULTS --------------------
-elif page == "Results":
-    st.header("Pipeline Results")
+        if st.session_state.outputs is None:
+            st.warning("No pipeline run yet.")
+        else:
+            with st.container(key="analysis_container"):
 
-    if st.session_state.outputs is None:
-        st.warning("No pipeline run yet.")
-    else:
-        with st.container(key="analysis_container"):
+                st.subheader("Execution Summary")
 
-            st.subheader("Execution Summary")
-
-            exec_time = None
-            if st.session_state.start_time and st.session_state.end_time:
-                exec_time = round(
-                    st.session_state.end_time - st.session_state.start_time, 2
-                )
-
-            c1, c2, c3 = st.columns(3)
-            c1.metric("Status", "Completed")
-            c2.metric("Files Generated", len(st.session_state.outputs))
-            c3.metric("Execution Time (s)", exec_time if exec_time else "—")
-
-            st.markdown("</div>", unsafe_allow_html=True)
-
-        st.subheader("Downloads")
-        st.caption("Generated datasets and intermediate outputs")
-
-        for key, value in st.session_state.outputs.items():
-            if isinstance(value, str):
-                with open(value, "rb") as f:
-                    st.download_button(
-                        label=f"Download {key.replace('_', ' ').title()}",
-                        data=f,
-                        file_name=value.split("/")[-1],
-                        mime="application/json"
+                exec_time = None
+                if st.session_state.start_time and st.session_state.end_time:
+                    exec_time = round(
+                        st.session_state.end_time - st.session_state.start_time, 2
                     )
+
+                c1, c2, c3 = st.columns(3)
+                c1.metric("Status", "Completed")
+                c2.metric("Files Generated", len(st.session_state.outputs))
+                c3.metric("Execution Time (s)", exec_time if exec_time else "—")
+
+                st.markdown("</div>", unsafe_allow_html=True)
+
+            st.subheader("Downloads")
+            st.caption("Generated datasets and intermediate outputs")
+
+            for key, value in st.session_state.outputs.items():
+                if isinstance(value, str):
+                    with open(value, "rb") as f:
+                        st.download_button(
+                            label=f"Download {key.replace('_', ' ').title()}",
+                            data=f,
+                            file_name=value.split("/")[-1],
+                            mime="application/json"
+                        )
+    

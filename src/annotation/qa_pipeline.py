@@ -23,16 +23,18 @@ class QAPipeline:
 
             for chunk in chunk_text(text):
                 try:
-                    question = self.qg.generate(chunk)
-                    answer, score = self.qa.extract(question, chunk)
+                    questions = self.qg.generate(chunk)
 
-                    if score >= MIN_ANSWER_SCORE and len(answer.strip()) >= MIN_ANSWER_LENGTH:
-                        qa_pairs.append({
-                            "page_number": page_number,
-                            "question": question,
-                            "answer": answer,
-                            "context": chunk
-                        })
+                    for question in questions:
+                        answer, score = self.qa.extract(question, chunk)
+
+                        if score >= MIN_ANSWER_SCORE and len(answer.strip()) >= MIN_ANSWER_LENGTH:
+                            qa_pairs.append({
+                                "page_number": page_number,
+                                "question": question,
+                                "answer": answer,
+                                "context": chunk
+                            })
                 except Exception:
                     continue
 
