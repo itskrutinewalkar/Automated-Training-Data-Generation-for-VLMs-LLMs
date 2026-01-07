@@ -30,7 +30,9 @@ def process_pdf(uploaded_files):
         images = pdf_to_images(pdf_path)
 
         # OCR
-        ocr_pages = extract_text_from_images(images)
+        # ensure OCR output is written to repo data/processed
+        ocr_output_path = os.path.join("data", "processed", "ocr_output.json")
+        ocr_pages = extract_text_from_images(images, ocr_output_path=ocr_output_path)
 
         # Merge pages and create cleaned text
         for page in ocr_pages:
@@ -50,5 +52,6 @@ def process_pdf(uploaded_files):
     save_cleaned_pages(all_pages, output_path)
 
     return {
-        "cleaned": output_path
+        "cleaned": output_path,
+        "ocr_output": ocr_output_path
     }

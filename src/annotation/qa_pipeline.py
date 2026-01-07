@@ -41,4 +41,6 @@ class QAPipeline:
         with open(output_path, "w") as f:
             json.dump(qa_pairs, f, indent=2)
 
+        if len(qa_pairs) == 0:
+            print("\n⚠️ No valid QA pairs were generated. Try adjusting the thresholds or check the input data.")
         print(f"\n✅ Generated {len(qa_pairs)} QA pairs")

@@ -36,10 +36,14 @@ def run(uploaded_files=None, cleaned_json_path=None, progress_callback=None):
 
     update("Annotation and QA generation completed", 95)
 
+    # indicate whether QA outputs were produced
+    qa_generated = bool(qa_outputs)
+
     # Completion stage
     update("Finalizing outputs", 100)
 
     return {
         **ingestion_outputs,
-        **qa_outputs
+        **qa_outputs,
+        "qa_generated": qa_generated
     }

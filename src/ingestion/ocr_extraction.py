@@ -28,7 +28,7 @@ def pdf_to_images(pdf_path, image_output_dir=None):
 
 def extract_text_from_images(image_paths, ocr_output_path=None):
     if ocr_output_path is None:
-        ocr_output_path = Path("../data/processed/ocr_output.json")
+        ocr_output_path = Path("data/processed/ocr_output.json")
     else:
         ocr_output_path = Path(ocr_output_path)
 
@@ -46,8 +46,7 @@ def extract_text_from_images(image_paths, ocr_output_path=None):
         extracted_data.append({
             "page_number": i + 1,
             "image_path": img_path,
-            "text": text.strip(),
-            "raw_text": text.strip()
+            "text": text.strip()
         })
         print(f"[INFO] Extracted text from page {i+1}")
 
